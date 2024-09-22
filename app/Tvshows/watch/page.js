@@ -9,7 +9,7 @@ import { FaPlay } from "react-icons/fa";
 const defaultImage =
   "https://yts.mx/assets/images/movies/spider_man_no_way_home_2021/background.jpg";
 
-function page() {
+function Page() {
   const [Movies, setMovies] = useState([]);
   const [visibleCount, setVisibleCount] = useState(20);
   const [Details, setDetails] = useState(null);
@@ -139,4 +139,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
