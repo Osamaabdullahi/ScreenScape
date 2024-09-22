@@ -3,7 +3,7 @@ import Navbar from "@/component/Navbar";
 import Tvshows from "@/component/TvShows";
 import Footer from "@/component/Footer";
 
-function page() {
+function Page() {
   return (
     <>
       <Navbar />
@@ -13,4 +13,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

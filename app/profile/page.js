@@ -1,6 +1,6 @@
 import Profile from "../../component/Profile";
 
-const page = () => {
+const Page = () => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Profile />
@@ -8,4 +8,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
