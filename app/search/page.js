@@ -128,7 +128,7 @@ function Search() {
               {Movies.map((movie, index) => (
                 <Link href={`watch/?id=${movie.show.id}`}>
                   <div
-                    key={movie.id}
+                    key={index}
                     className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1"
                   >
                     <div className="relative h-80">
@@ -162,9 +162,9 @@ function Search() {
             <div className="container mx-auto px-6">
               <h2 className="text-3xl font-semibold mb-8">Coming Soon</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {upcomingMovies.map((movie) => (
+                {upcomingMovies.map((movie, index) => (
                   <div
-                    key={movie.id}
+                    key={index}
                     className="bg-gray-900 rounded-lg overflow-hidden shadow-lg"
                   >
                     <div className="relative h-64">
@@ -193,9 +193,9 @@ function Search() {
           <section className="container mx-auto px-6 py-16">
             <h2 className="text-3xl font-semibold mb-8">User Reviews</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {reviews.map((review) => (
+              {reviews.map((review, index) => (
                 <div
-                  key={review.id}
+                  key={index}
                   className="bg-gray-800 rounded-lg p-6 shadow-lg"
                 >
                   <FaQuoteLeft className="text-red-600 text-3xl mb-4" />

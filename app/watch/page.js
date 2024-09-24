@@ -5,7 +5,7 @@ import Navbar from "@/component/Navbar";
 import MovieList from "@/component/cards/MovieList";
 import Footer from "@/component/Footer";
 
-function page() {
+function Page() {
   const [Movies, setMovies] = useState([]);
   const [Loading, setLoading] = useState(true);
 
@@ -37,4 +37,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
