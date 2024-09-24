@@ -51,9 +51,7 @@ To run the project locally, follow these steps:
 
 
 
-## 🖼️ Screenshots
 
-![ScreenScape Screenshot](https://link-to-screenshot.jpg)
 
 ## 🚧 Future Improvements
 
