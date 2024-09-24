@@ -5,6 +5,7 @@ import Footer from "@/component/Footer";
 import TvshowsList from "@/component/cards/TvshowList";
 import { useSearchParams } from "next/navigation";
 import { FaPlay } from "react-icons/fa";
+import { Suspense } from "react";
 
 const defaultImage =
   "https://yts.mx/assets/images/movies/spider_man_no_way_home_2021/background.jpg";
@@ -52,7 +53,7 @@ function Page() {
   }
 
   return (
-    <>
+    <Suspense>
       <Navbar />
       <div
         className="bg-black min-h-screen "
@@ -135,7 +136,7 @@ function Page() {
       </div>
       <TvshowsList Movies={Movies} title={"Related  Tv shows"} />
       <Footer />
-    </>
+    </Suspense>
   );
 }
 
