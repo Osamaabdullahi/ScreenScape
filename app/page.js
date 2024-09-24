@@ -196,10 +196,10 @@ export default function HomePage() {
             </a>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-            {Movies.map((movie) => (
+            {Movies.map((movie, index) => (
               <Link href={`/watch/?id=${movie.id}`}>
                 <div
-                  key={movie.id}
+                  key={index}
                   className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1"
                 >
                   <div className="relative h-80">
@@ -240,9 +240,9 @@ export default function HomePage() {
           <div className="container mx-auto px-6">
             <h2 className="text-3xl font-semibold mb-8">Coming Soon</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {upcomingMovies.map((movie) => (
+              {upcomingMovies.map((movie, index) => (
                 <div
-                  key={movie.id}
+                  key={index}
                   className="bg-gray-900 rounded-lg overflow-hidden shadow-lg"
                 >
                   <div className="relative h-64">
@@ -271,11 +271,8 @@ export default function HomePage() {
         <section className="container mx-auto px-6 py-16">
           <h2 className="text-3xl font-semibold mb-8">User Reviews</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {reviews.map((review) => (
-              <div
-                key={review.id}
-                className="bg-gray-800 rounded-lg p-6 shadow-lg"
-              >
+            {reviews.map((review, index) => (
+              <div key={index} className="bg-gray-800 rounded-lg p-6 shadow-lg">
                 <FaQuoteLeft className="text-red-600 text-3xl mb-4" />
                 <p className="text-lg mb-4">{review.content}</p>
                 <div className="flex items-center justify-between">
@@ -313,7 +310,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-2xl font-bold text-red-600 mb-4">
-                CineVerse
+                ScreenScape
               </h3>
               <p className="text-gray-400">
                 Your ultimate destination for movies and TV shows
