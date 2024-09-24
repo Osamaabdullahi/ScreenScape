@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { FaCalendarAlt, FaQuoteLeft, FaStar } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 
 const reviews = [
   {
@@ -115,7 +116,7 @@ function Search() {
   }, [search]);
 
   return (
-    <>
+    <Suspense>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
         <main className="pt-20">
@@ -335,7 +336,7 @@ function Search() {
         </footer>
       </div>
       <Footer />
-    </>
+    </Suspense>
   );
 }
 
