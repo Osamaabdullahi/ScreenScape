@@ -126,11 +126,8 @@ function Search() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
               {Movies.map((movie, index) => (
-                <Link href={`watch/?id=${movie.show.id}`}>
-                  <div
-                    key={index}
-                    className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1"
-                  >
+                <Link href={`watch/?id=${movie.show.id}`} key={index}>
+                  <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1">
                     <div className="relative h-80">
                       <Image
                         src={movie.show?.image?.medium}
