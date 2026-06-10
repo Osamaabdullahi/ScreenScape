@@ -76,7 +76,7 @@ export default function HomePage() {
   const [Loading, setLoading] = useState(true);
 
   const getMovies = async () => {
-    const url = "https://yts.mx/api/v2/list_movies.json?quality=3D";
+    const url = "https://yts.bz/api/v2/list_movies.json?quality=3D";
     const response = await fetch(url);
     const data = await response.json();
     if (response.ok) {
