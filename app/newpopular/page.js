@@ -11,7 +11,7 @@ function Page() {
   const [totalPages, setTotalPages] = useState(0);
 
   const getMovies = async (page) => {
-    const url = `https://yts.mx/api/v2/list_movies.json?quality=3D&page=${page}`;
+    const url = `https://yts.bz/api/v2/list_movies.json?quality=3D&page=${page}`;
     const response = await fetch(url);
     const data = await response.json();
 
