@@ -8,7 +8,7 @@ import { FaPlay } from "react-icons/fa";
 import { Suspense } from "react";
 
 const defaultImage =
-  "https://yts.mx/assets/images/movies/spider_man_no_way_home_2021/background.jpg";
+  "https://yts.bz/assets/images/movies/spider_man_no_way_home_2021/background.jpg";
 
 function Page() {
   const [Movies, setMovies] = useState([]);
