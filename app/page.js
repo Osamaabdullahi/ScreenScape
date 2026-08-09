@@ -1,363 +1,222 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  FaSearch,
-  FaPlay,
-  FaStar,
-  FaChevronRight,
-  FaCalendarAlt,
-  FaClock,
-  FaQuoteLeft,
-  FaChevronDown,
-} from "react-icons/fa";
-import Navbar from "@/component/Navbar";
-import MovieList from "@/component/cards/MovieList";
+import { ArrowRight, Star } from "lucide-react";
+import OnAirTicker from "@/component/OnAirTicker";
+import MediaRail from "@/component/MediaRail";
+import { GENRES } from "@/lib/genres";
+import { MOVIE_GENRES } from "@/lib/movieGenres";
+import { getShowPool } from "@/lib/tvmaze";
+import { getMoviePool, hasOmdbKey } from "@/lib/omdb";
+import { fromShow, fromMovie } from "@/lib/normalize";
 
-const upcomingMovies = [
-  {
-    id: 1,
-    title: "Dune: Part Two",
-    releaseDate: "2024-03-15",
-    image:
-      "https://i.pinimg.com/474x/0c/b4/22/0cb4227980a65c6e8a135525e0b601ec.jpg",
-  },
-  {
-    id: 2,
-    title: "Oppenheimer",
-    releaseDate: "2024-07-21",
-    image:
-      "https://i.pinimg.com/474x/77/9d/a3/779da30964fb69b47c4f03138d482f9d.jpg",
-  },
-  {
-    id: 3,
-    title: "Mission: Impossible 8",
-    releaseDate: "2024-07-07",
-    image:
-      "https://i.pinimg.com/474x/bf/83/b9/bf83b924c49a3a10d145fb1bfd6a078b.jpg",
-  },
-];
+export const dynamic = "force-dynamic";
 
-const reviews = [
-  {
-    id: 1,
-    user: "John D.",
-    movie: "Inception",
-    content: "Mind-bending and visually stunning. Nolan at his best!",
-  },
-  {
-    id: 2,
-    user: "Sarah M.",
-    movie: "The Shawshank Redemption",
-    content: "A timeless classic that never fails to inspire.",
-  },
-];
+function dateline() {
+  return new Date()
+    .toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+    .toUpperCase();
+}
 
-const genres = [
-  "Action",
-  "Comedy",
-  "Drama",
-  "Sci-Fi",
-  "Horror",
-  "Romance",
-  "Thriller",
-  "Animation",
-  "Adventure",
-  "Fantasy",
-  "Crime",
-  "Documentary",
-];
+export default async function HomePage() {
+  const [showPool, moviePool] = await Promise.all([
+    getShowPool(3).catch(() => []),
+    hasOmdbKey() ? getMoviePool().catch(() => []) : Promise.resolve([]),
+  ]);
 
-export default function HomePage() {
-  const [showGenres, setShowGenres] = useState(false);
-  const [Movies, setMovies] = useState([]);
-  const [Loading, setLoading] = useState(true);
+  const shows = showPool.filter((s) => s.image?.original && s.summary).map(fromShow);
+  const movies = moviePool.map(fromMovie).filter((m) => m.poster);
 
-  const getMovies = async () => {
-    const url = "https://yts.bz/api/v2/list_movies.json?quality=3D";
-    const response = await fetch(url);
-    const data = await response.json();
-    if (response.ok) {
-      setMovies(data.data.movies);
-    }
-  };
+  const rankedShows = [...shows].sort((a, b) => b.rating - a.rating);
+  const rankedMovies = [...movies].sort((a, b) => b.rating - a.rating);
+  const combined = [...rankedShows, ...rankedMovies].sort((a, b) => b.rating - a.rating);
 
-  useEffect(() => {
-    getMovies();
-  }, []);
+  const featured = combined[0];
+  const acclaimedShows = rankedShows.filter((s) => s.id !== featured?.id).slice(0, 12);
+  const acclaimedMovies = rankedMovies.filter((m) => m.id !== featured?.id).slice(0, 12);
 
-  if (!Movies) {
-    return <div className="text-gray-900">Loading....</div>;
-  }
+  const currentYear = new Date().getFullYear();
+  const freshShows = rankedShows.filter((s) => Number(s.year) >= currentYear - 2).slice(0, 12);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navbar />
-
-      <main className="pt-11">
-        <section className="relative h-screen homecont">
-          <Image
-            src={Movies[0]?.large_cover_image}
-            alt="Featured Movie"
-            layout="fill"
-            objectFit="cover"
-            quality={100}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
-          <div
-            style={{ width: "100%" }}
-            className="absolute bottom-0 left-0 p-16 w-2/3  "
-          >
-            <h2 className="text-6xl font-bold mb-4 hometext">
-              {Movies[0]?.title}
-            </h2>
-            <p className="text-xl mb-6 line-clamp-3">
-              {Movies[0]?.description_full}
+    <div>
+      {/* Masthead */}
+      <section className="mx-auto max-w-content px-5 pb-10 pt-14">
+        <div className="flex flex-col gap-4 border-b border-ink-line pb-10 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="eyebrow mb-3 text-paper-dim">{dateline()}</p>
+            <h1 className="max-w-xl font-display text-4xl leading-[1.1] text-paper sm:text-5xl">
+              A guide to what&apos;s worth watching.
+            </h1>
+            <p className="mt-4 max-w-md text-paper-dim">
+              ScreenScape sorts through television and film so you don&apos;t have to —
+              browse by genre, follow tonight&apos;s lineup, or answer three questions
+              and get a shortlist back.
             </p>
-            <div className="flex items-center space-x-4 mb-8">
-              <span className="bg-gray-800 text-sm px-3 py-1 rounded-full">
-                Sci-Fi
-              </span>
-              <span className="flex items-center">
-                <FaStar className="text-yellow-400 mr-1" /> 8.6
-              </span>
-              <span className="flex items-center">
-                <FaClock className="mr-1" /> {Movies[0]?.runtime}min
-              </span>
-            </div>
-            <Link href={`/watch/?id=${Movies[0]?.id}`}>
-              <button className="bg-red-600 text-white px-8 py-3 rounded-full hover:bg-red-700 transition duration-300 flex items-center text-lg font-semibold">
-                <FaPlay className="mr-2" /> Watch Now
-              </button>
+          </div>
+          <div className="flex shrink-0 gap-3">
+            <Link
+              href="/recommend"
+              className="flex items-center gap-2 rounded-sm bg-gold px-5 py-3 text-sm font-medium text-ink transition-colors hover:bg-gold/90"
+            >
+              Find something to watch <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/shows"
+              className="flex items-center gap-2 rounded-sm border border-ink-line px-5 py-3 text-sm text-paper transition-colors hover:border-gold"
+            >
+              Browse shows
             </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="container mx-auto px-6 py-16">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-semibold">Trending Now</h2>
-            <a
-              href="/movies"
-              className="text-red-600 hover:underline flex items-center text-lg"
-            >
-              View All <FaChevronRight className="ml-1" />
-            </a>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
-            {Movies.map((movie, index) => (
-              <Link href={`/watch/?id=${movie.id}`} key={index}>
-                <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1">
-                  <div className="relative h-80">
-                    <Image
-                      src={movie.medium_cover_image}
-                      alt={movie.title}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-4">
-                      <h3 className="font-semibold text-xl mb-1">
-                        {movie.title}
-                      </h3>
-                      <p className="text-sm text-gray-300 mb-2">
-                        {/* {movie.Director} */}
-                      </p>
-                      <div className="flex items-center">
-                        <FaStar className="text-yellow-400 mr-1" />
-                        <span>{movie.rating}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-                      {movie.genres[0]}{" "}
+      <OnAirTicker />
+
+      {/* Featured pick */}
+      {featured && (
+        <section className="mx-auto max-w-content px-5 py-14">
+          <p className="eyebrow mb-6 text-gold">Featured pick</p>
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-[280px_1fr]">
+            <Link href={featured.href} className="block">
+              <div className="relative aspect-[2/3] w-full max-w-[280px] overflow-hidden rounded-sm bg-ink-raised">
+                <Image
+                  src={featured.poster}
+                  alt={featured.name}
+                  fill
+                  sizes="280px"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </Link>
+            <div className="flex flex-col justify-center">
+              <div className="eyebrow mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-paper-dim">
+                <span>{featured.kind === "movie" ? "Film" : "TV"}</span>
+                <span aria-hidden>·</span>
+                <span>{featured.year}</span>
+                <span aria-hidden>·</span>
+                <span>{featured.genres?.join(", ") || "—"}</span>
+                {featured.rating > 0 && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span className="flex items-center gap-1 text-gold">
+                      <Star className="h-3 w-3" fill="currentColor" strokeWidth={0} />
+                      {featured.rating.toFixed(1)}
                     </span>
-                  </div>
-                </div>
+                  </>
+                )}
+              </div>
+              <h2 className="font-display text-3xl text-paper">{featured.name}</h2>
+              <p className="mt-4 max-w-xl text-paper-dim">{featured.summary.slice(0, 320)}</p>
+              <Link
+                href={featured.href}
+                className="eyebrow mt-6 flex w-fit items-center gap-1.5 border-b border-gold pb-1 text-paper"
+              >
+                Read more <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-            ))}
-          </div>
-        </section>
-
-        <MovieList Movies={Movies} title={"Trending Now"} />
-
-        <section className="bg-gray-800 py-16">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl font-semibold mb-8">Coming Soon</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {upcomingMovies.map((movie, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-900 rounded-lg overflow-hidden shadow-lg"
-                >
-                  <div className="relative h-64">
-                    <Image
-                      src={movie.image}
-                      alt={movie.title}
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-semibold text-xl mb-2">
-                      {movie.title}
-                    </h3>
-                    <div className="flex items-center text-gray-400">
-                      <FaCalendarAlt className="mr-2" />
-                      <span>{movie.releaseDate}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
+      )}
 
-        <section className="container mx-auto px-6 py-16">
-          <h2 className="text-3xl font-semibold mb-8">User Reviews</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {reviews.map((review, index) => (
-              <div key={index} className="bg-gray-800 rounded-lg p-6 shadow-lg">
-                <FaQuoteLeft className="text-red-600 text-3xl mb-4" />
-                <p className="text-lg mb-4">{review.content}</p>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{review.user}</span>
-                  <span className="text-gray-400">on {review.movie}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+      <div className="rule mx-5" />
 
-        <section className="bg-red-600 py-16">
-          <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl font-semibold mb-4">Stay Updated</h2>
-            <p className="text-xl mb-8">
-              Subscribe to our newsletter for the latest movie news and
-              exclusive offers
+      <MediaRail
+        eyebrow="Consistently acclaimed"
+        title="Highly rated shows"
+        items={acclaimedShows}
+        viewAllHref="/shows?sort=rating"
+      />
+
+      {hasOmdbKey() ? (
+        <MediaRail
+          eyebrow="Consistently acclaimed"
+          title="Highly rated films"
+          items={acclaimedMovies}
+          viewAllHref="/movies?sort=rating"
+        />
+      ) : (
+        <section className="mx-auto max-w-content px-5 py-10">
+          <div className="border border-dashed border-ink-line px-6 py-8 text-center">
+            <p className="eyebrow mb-2 text-gold">Films not connected</p>
+            <p className="mx-auto max-w-sm text-paper-dim">
+              Add an OMDb API key to <code className="font-mono text-paper">.env.local</code> as{" "}
+              <code className="font-mono text-paper">OMDB_API_KEY</code> to turn on film
+              recommendations.
             </p>
-            <form className="max-w-lg mx-auto flex">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-grow px-4 py-3 rounded-l-full focus:outline-none focus:ring-2 focus:ring-red-700 text-gray-900"
-              />
-              <button className="bg-gray-900 text-white px-6 py-3 rounded-r-full hover:bg-gray-800 transition duration-300">
-                Subscribe
-              </button>
-            </form>
           </div>
         </section>
-      </main>
+      )}
 
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-2xl font-bold text-red-600 mb-4">
-                ScreenScape
-              </h3>
-              <p className="text-gray-400">
-                Your ultimate destination for movies and TV shows
-              </p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Movies
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    TV Shows
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    My List
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Terms of Service
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Cookie Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
-              <div className="flex space-x-4">
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-red-600 transition duration-300"
-                >
-                  Facebook
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-red-600 transition duration-300"
-                >
-                  Twitter
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-red-600 transition duration-300"
-                >
-                  Instagram
-                </a>
-              </div>
-            </div>
+      {/* Genre index */}
+      <section className="mx-auto max-w-content px-5 py-10">
+        <p className="eyebrow mb-4 text-paper-dim">Browse TV by genre</p>
+        <div className="flex flex-wrap gap-x-5 gap-y-3">
+          {GENRES.map((g) => (
+            <Link
+              key={g}
+              href={`/shows?genre=${encodeURIComponent(g)}`}
+              className="border-b border-transparent font-display text-lg text-paper-dim transition-colors hover:border-gold hover:text-paper"
+            >
+              {g}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-content px-5 py-10">
+        <p className="eyebrow mb-4 text-paper-dim">Browse film by genre</p>
+        <div className="flex flex-wrap gap-x-5 gap-y-3">
+          {MOVIE_GENRES.map((g) => (
+            <Link
+              key={g}
+              href={`/movies?genre=${encodeURIComponent(g)}`}
+              className="border-b border-transparent font-display text-lg text-paper-dim transition-colors hover:border-gold hover:text-paper"
+            >
+              {g}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <MediaRail
+        eyebrow="Premiered recently"
+        title="New to the schedule"
+        items={freshShows}
+        viewAllHref="/shows?sort=rating"
+      />
+
+      {/* How it works */}
+      <section className="mx-auto max-w-content px-5 py-16">
+        <div className="grid grid-cols-1 gap-10 border-t border-ink-line pt-10 sm:grid-cols-3">
+          <div>
+            <p className="eyebrow mb-2 text-gold">By genre and rating</p>
+            <p className="text-paper-dim">
+              Every title carries genre tags and an audience rating. The recommend tool weighs
+              both, across shows and films, to shortlist what fits your mood.
+            </p>
           </div>
-          <div className="mt-12 text-center text-gray-400 border-t border-gray-800 pt-8">
-            <p>&copy; 2024 CineVerse. All rights reserved.</p>
+          <div>
+            <p className="eyebrow mb-2 text-gold">By network, year and status</p>
+            <p className="text-paper-dim">
+              See whether a show is still running, which network carries it, or when a film was
+              released — before you commit.
+            </p>
+          </div>
+          <div>
+            <p className="eyebrow mb-2 text-gold">By schedule</p>
+            <p className="text-paper-dim">
+              The schedule page follows what&apos;s airing today in a given country,
+              pulled straight from TVmaze&apos;s listings.
+            </p>
           </div>
         </div>
-      </footer>
+      </section>
     </div>
   );
 }

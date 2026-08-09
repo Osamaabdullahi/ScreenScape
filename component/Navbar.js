@@ -1,224 +1,90 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Bell, User, Menu, X } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store";
+import { usePathname } from "next/navigation";
+import { Menu, X, Search, Bookmark } from "lucide-react";
+import clsx from "clsx";
+import { useWatchlistStore } from "@/store";
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+const LINKS = [
+  { href: "/shows", label: "Shows" },
+  { href: "/movies", label: "Movies" },
+  { href: "/schedule", label: "Schedule" },
+  { href: "/recommend", label: "Recommend" },
+];
 
-  const router = useRouter();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    router.push(`/search/?search=${encodeURIComponent(searchQuery)}`);
-  };
-
-  // const handleAuth = () => {
-  //   // Toggle authentication state (for demonstration purposes)
-  //   setIsAuthenticated(!isAuthenticated);
-  //   router.push("sighin");
-  // };
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const count = useWatchlistStore((s) => s.items.length);
 
   return (
-    <nav
-      className={`fixed top-0 z-50 w-full transition-all duration-500   bg-gradient-to-b from-gray-900 to-black ${
-        isScrolled ? "bg-black" : "bg-transparent"
-      }}
-      `}
-      style={{
-        padding: "10px 0 15px 0 ",
-        position: "fixed",
-        top: 0,
-        zIndex: 1,
-        // backgroundColor: "black",
-        left: 0,
-        right: 0,
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0">
-              <span
-                style={{ margin: "0 50px 0 0 " }}
-                className="text-red-600 text-2xl font-bold"
-              >
-                ScreenScape
-              </span>
-            </Link>
-            <div className="hidden md:block ml-8   mobile">
-              <div className="flex items-baseline space-x-4">
-                <Link
-                  href="/"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Home
-                </Link>
-                <Link
-                  href="/Tvshows"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  TV Shows
-                </Link>
-                <Link
-                  href="/movies"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Movies
-                </Link>
-                <Link
-                  href="/newpopular"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  New & Popular
-                </Link>
-                <Link
-                  href="/mylist"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  My List
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center mobile">
-            <form onSubmit={handleSearch} className="mr-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="bg-gray-800 text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
-              />
-            </form>
-            {isAuthenticated ? (
-              <>
-                <button className="text-gray-300 hover:text-white p-1">
-                  <Bell className="h-6 w-6" />
-                </button>
-                <button className="text-gray-300 hover:text-white p-1 ml-4">
-                  <User className="h-6 w-6" />
-                </button>
-              </>
-            ) : (
-              <Link href="sighin">
-                <button
-                  // onClick={handleAuth}
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300"
-                >
-                  Sign In
-                </button>
-              </Link>
-            )}
-          </div>{" "}
-          <div className="md:hidden flex items-center bar">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="text-gray-300 hover:text-white focus:outline-none"
-            >
-              {menuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
+    <header className="sticky top-0 z-50 border-b border-ink-line/60 bg-ink/90 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-content items-center justify-between px-5">
+        <Link href="/" className="flex items-baseline gap-2" onClick={() => setOpen(false)}>
+          <span className="font-display text-xl tracking-tight text-paper">ScreenScape</span>
+          <span className="eyebrow hidden text-paper-dim sm:inline">TV, well guided</span>
+        </Link>
+
+        <nav className="hidden items-center gap-7 md:flex">
+          {LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={clsx(
+                "eyebrow border-b pb-1 transition-colors",
+                pathname.startsWith(link.href)
+                  ? "border-gold text-paper"
+                  : "border-transparent text-paper-dim hover:text-paper"
               )}
-            </button>
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="hidden items-center gap-5 md:flex">
+          <Link href="/search" aria-label="Search shows" className="text-paper-dim transition-colors hover:text-paper">
+            <Search className="h-[18px] w-[18px]" strokeWidth={1.6} />
+          </Link>
+          <Link
+            href="/watchlist"
+            className="flex items-center gap-2 text-paper-dim transition-colors hover:text-paper"
+          >
+            <Bookmark className="h-[18px] w-[18px]" strokeWidth={1.6} />
+            <span className="eyebrow">
+              Watchlist{count > 0 ? ` (${count})` : ""}
+            </span>
+          </Link>
+        </div>
+
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="text-paper md:hidden"
+          aria-label="Toggle menu"
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {open && (
+        <div className="border-t border-ink-line/60 px-5 pb-6 pt-2 md:hidden">
+          <div className="flex flex-col gap-4 pt-3">
+            {LINKS.map((link) => (
+              <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="eyebrow text-paper">
+                {link.label}
+              </Link>
+            ))}
+            <Link href="/search" onClick={() => setOpen(false)} className="eyebrow text-paper">
+              Search
+            </Link>
+            <Link href="/watchlist" onClick={() => setOpen(false)} className="eyebrow text-paper">
+              Watchlist{count > 0 ? ` (${count})` : ""}
+            </Link>
           </div>
         </div>
-      </div>
-      {menuOpen && <MobileNav />}
-    </nav>
+      )}
+    </header>
   );
-};
-
-export default Navbar;
-
-const MobileNav = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
-  const [menuOpen, setMenuOpen] = useState(false);
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    router.push(`/search/?search=${encodeURIComponent(searchQuery)}`);
-  };
-  return (
-    <>
-      <div className="md:hidden bg-black transition-all duration-300">
-        <div className="px-4 py-3 space-y-4">
-          <form onSubmit={handleSearch}>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search..."
-              className="w-full bg-gray-800 text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
-            />
-          </form>
-
-          <Link href="/" className="block text-gray-300 hover:text-white">
-            Home
-          </Link>
-          <Link
-            href="/Tvshows"
-            className="block text-gray-300 hover:text-white"
-          >
-            TV Shows
-          </Link>
-          <Link href="/movies" className="block text-gray-300 hover:text-white">
-            Movies
-          </Link>
-          <Link
-            href="/newpopular"
-            className="block text-gray-300 hover:text-white"
-          >
-            New & Popular
-          </Link>
-          <Link href="/mylist" className="block text-gray-300 hover:text-white">
-            My List
-          </Link>
-
-          {isAuthenticated ? (
-            <div className="flex space-x-4">
-              <button className="text-gray-300 hover:text-white">
-                <Bell className="h-6 w-6" />
-              </button>
-              <button className="text-gray-300 hover:text-white">
-                <User className="h-6 w-6" />
-              </button>
-            </div>
-          ) : (
-            <Link href="/signin">
-              <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">
-                Sign In
-              </button>
-            </Link>
-          )}
-        </div>
-      </div>
-    </>
-  );
-};
+}

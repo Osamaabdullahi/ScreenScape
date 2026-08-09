@@ -1,12 +1,12 @@
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {};
-
-// export default nextConfig;
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["i.pinimg.com", "yts.mx", "static.tvmaze.com", "yts.bz"], // Add allowed domains here   domains: ['yts.mx'],
+    remotePatterns: [
+      { protocol: "https", hostname: "static.tvmaze.com" },
+      { protocol: "https", hostname: "api.tvmaze.com" },
+      { protocol: "https", hostname: "m.media-amazon.com" },
+      { protocol: "https", hostname: "img.omdbapi.com" },
+    ],
   },
 };
 

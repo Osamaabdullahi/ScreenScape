@@ -2,26 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-.mobile {
-  display: flex; /* Visible by default */
+:root {
+  --ink: #10131a;
+  --ink-raised: #171b24;
+  --line: rgba(237, 231, 217, 0.12);
+  --paper: #ede7d9;
 }
 
-.bar {
-  display: none;
+* {
+  border-color: var(--line);
 }
 
-@media only screen and (max-width: 768px) {
-  .mobile {
-    display: none; /* Hidden on mobile (screens smaller than 768px) */
-  }
-  .bar {
-    display: block;
-  }
+html {
+  scroll-behavior: smooth;
+}
 
-  .hometext {
-    font-size: 30px;
+body {
+  background-color: var(--ink);
+  color: var(--paper);
+  font-family: theme("fontFamily.body");
+}
+
+::selection {
+  background: #c9a15a;
+  color: #10131a;
+}
+
+/* visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #c9a15a;
+  outline-offset: 3px;
+}
+
+/* thin custom scrollbar for horizontal rails */
+.rail::-webkit-scrollbar {
+  height: 5px;
+}
+.rail::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rail::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 3px;
+}
+
+/* on-air ticker marquee */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
   }
-  .homecont {
-    width: "100%";
+  to {
+    transform: translateX(-50%);
   }
+}
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.eyebrow {
+  font-family: theme("fontFamily.mono");
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+.rule {
+  border-top: 1px solid var(--line);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

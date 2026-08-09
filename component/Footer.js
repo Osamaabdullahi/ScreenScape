@@ -1,116 +1,62 @@
-import React from "react";
+import Link from "next/link";
 
-function Footer() {
+export default function Footer() {
   return (
-    <>
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-2xl font-bold text-red-600 mb-4">
-                CineVerse
-              </h3>
-              <p className="text-gray-400">
-                Your ultimate destination for movies and TV shows
-              </p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Movies
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    TV Shows
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    My List
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Terms of Service
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-red-600 transition duration-300"
-                  >
-                    Cookie Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
-              <div className="flex space-x-4">
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-red-600 transition duration-300"
-                >
-                  Facebook
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-red-600 transition duration-300"
-                >
-                  Twitter
-                </a>
-                <a
-                  href="#"
-                  className="text-gray-400 hover:text-red-600 transition duration-300"
-                >
-                  Instagram
-                </a>
-              </div>
-            </div>
+    <footer className="border-t border-ink-line/60">
+      <div className="mx-auto max-w-content px-5 py-12">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          <div className="col-span-2 sm:col-span-1">
+            <span className="font-display text-lg text-paper">ScreenScape</span>
+            <p className="mt-2 max-w-[22ch] text-sm text-paper-dim">
+              A quiet guide to what&apos;s worth watching.
+            </p>
           </div>
-          <div className="mt-12 text-center text-gray-400 border-t border-gray-800 pt-8">
-            <p>&copy; 2024 CineVerse. All rights reserved.</p>
+          <div>
+            <p className="eyebrow mb-3 text-paper-dim">Browse</p>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/shows" className="text-paper-dim hover:text-paper">All shows</Link></li>
+              <li><Link href="/movies" className="text-paper-dim hover:text-paper">All films</Link></li>
+              <li><Link href="/schedule" className="text-paper-dim hover:text-paper">Tonight&apos;s schedule</Link></li>
+              <li><Link href="/recommend" className="text-paper-dim hover:text-paper">Find something to watch</Link></li>
+            </ul>
+          </div>
+          <div>
+            <p className="eyebrow mb-3 text-paper-dim">You</p>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/watchlist" className="text-paper-dim hover:text-paper">Watchlist</Link></li>
+              <li><Link href="/search" className="text-paper-dim hover:text-paper">Search</Link></li>
+            </ul>
+          </div>
+          <div>
+            <p className="eyebrow mb-3 text-paper-dim">Source</p>
+            <p className="text-sm text-paper-dim">
+              TV data and images from{" "}
+              <a
+                href="https://www.tvmaze.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-paper underline decoration-ink-line underline-offset-4 hover:decoration-gold"
+              >
+                TVmaze
+              </a>
+              , used under CC BY-SA. Film data and posters from{" "}
+              <a
+                href="https://www.omdbapi.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-paper underline decoration-ink-line underline-offset-4 hover:decoration-gold"
+              >
+                OMDb API
+              </a>
+              .
+            </p>
           </div>
         </div>
-      </footer>
-    </>
+        <div className="mt-10 flex flex-col gap-2 border-t border-ink-line/60 pt-6 text-xs text-paper-dim sm:flex-row sm:items-center sm:justify-between">
+          <span>&copy; {new Date().getFullYear()} ScreenScape. Not affiliated with TVmaze.</span>
+          <span className="font-mono">No streaming, no downloads — recommendations only.</span>
+        </div>
+      </div>
+    </footer>
   );
 }
-
-export default Footer;
